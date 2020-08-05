@@ -2,9 +2,7 @@ extends Node
 
 var portalId = 1
 var max_portals = 2
-var portalA_pos : Vector2 = Vector2.ZERO
-var portalB_pos : Vector2 = Vector2.ZERO
-var portalexist :bool = false
+
 #just some utilities
 
 onready var portalA : Node = get_node("portal A")
@@ -22,23 +20,29 @@ func _input(event: InputEvent) -> void:
 
 func Create_portals(Position: Vector2) -> void: 
 	if portalId == 1 :
-		portalA_pos = Position
 		portalA.set_global_position(Position)
 		get_node("portal A").visible = true
 		portalId = portalId + 1
+		print(portalA.name)
+		portalB.connect("bodyEnteredPortal" , player , "teleport",[portal_exist(portalA),portalA.position])
 		return 
 	if portalId == 2 :
-		portalB_pos = Position
 		portalB.set_global_position(Position)
 		get_node("portal B").visible = true
 		portalId = portalId + 1
-		portalA.connect("bodyEnteredPortal" , player , "teleport", [get_portalB_pos()])
+		print(portalB.name)
+		portalA.connect("bodyEnteredPortal" , player , "teleport",[portal_exist(portalB),portalB.position])
 	return 
 
-func get_portalB_pos() -> Vector2:
-	return portalB_pos
 
-func does_portal_exist(portal : Node) -> bool : 
-	if portal : 
+func find_paired_portal(name : String) -> Vector2: 
+	if name == portalA.name :
+		return portalB.position
+	if name == portalB.name :
+		return portalA.position
+	return Vector2.ZERO
+
+func portal_exist(portal : Node2D) -> bool : 
+	if portal :
 		return true
 	return false
